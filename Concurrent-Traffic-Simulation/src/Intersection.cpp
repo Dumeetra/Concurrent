@@ -89,7 +89,7 @@ void Intersection::addVehicleToQueue(std::shared_ptr<Vehicle> vehicle)
 //}
     std::cout << "Intersection #" << _id << ": Vehicle #" << vehicle->getID() << " is granted entry." << std::endl;
 
-       _trafficLight.cycleThroughPhases();
+     //  _trafficLight.cycleThroughPhases();
   
   if( _trafficLight.getCurrentPhase()==TrafficLightPhase::red){
   _trafficLight.waitForGreen();
