@@ -34,7 +34,8 @@ template <typename T>
 void MessageQueue<T>::send(T &&msg)
 {
    std::lock_guard<std::mutex>lock(_mutex);
-  	_queue.push_back(msg);
+  _queue.clear();
+    _queue.push_back(std::move(msg));
   _condition.notify_one();
   
     // FP.4a : The method send should use the mechanisms std::lock_guard<std::mutex> 
@@ -77,28 +78,26 @@ void TrafficLight::simulate()
 // virtual function which is executed in a thread
 void TrafficLight::cycleThroughPhases()
 {
-  time_t current_time,total_time;
-  int rd = rand() % 3+4;//random number of seconds;
-  current_time = time(NULL);//initialize stopwatch
-  total_time=current_time+rd;
-  while(current_time!=total_time){
-    current_time = time(NULL);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-  }
-  
+   bool run=true;
+
+ while(run){
+ int rd = rand() % 3+4;//random number of seconds;
+ std::this_thread::sleep_for(std::chrono::milliseconds(rd*1000+1));
   switch(_currentPhase){
     case TrafficLightPhase::red:
       _currentPhase=TrafficLightPhase::green;
-      break;
+       std::cout<<"green\n";
+    break;
     case TrafficLightPhase::green:
       _currentPhase=TrafficLightPhase::red;
-      break;
-  }
-  
+       std::cout<<"red\n";
+    break;
+    }
+    
   msg.send(std::move(_currentPhase));
+}
 }
     // FP.2a : Implement the function with an infinite loop that measures the time between two loop cycles 
     // and toggles the current phase of the traffic light between red and green and sends an update method 
     // to the message queue using move semantics. The cycle duration should be a random value between 4 and 6 seconds. 
     // Also, the while-loop should use std::this_thread::sleep_for to wait 1ms between two cycles. 
-
